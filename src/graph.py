@@ -6,6 +6,6 @@ class Graph:
         self.times = times
 
     def render(self):
-        plt.title("SAT-solver computing time")
+        plt.title("Evolving formulas computing time")
         plt.plot(self.iterations, self.times)
         plt.show()
