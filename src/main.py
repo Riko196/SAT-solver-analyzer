@@ -1,11 +1,9 @@
-from constants import setConstants
-from generator import Generator
-from os import system
+from main_package.constants import setConstants
+setConstants()
+
+from main_package.generators.genetic_generator import GeneticGenerator
+from main_package.formula.formula import Formula
 
 if __name__ == "__main__":
-    setConstants()
-
-    generator = Generator()
+    generator = GeneticGenerator()
     formula = generator.evolveHardestFormulas()
-
-    system('rm *.pyc')
