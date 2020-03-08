@@ -1,6 +1,5 @@
 execute:
-	python src/main.py
+	cd src && python main.py && cd ..
 
 clean:
-	rm src/*.pyc
-	rm -r src/__pycache__
+	find . -type f -name '*.pyc' -delete
