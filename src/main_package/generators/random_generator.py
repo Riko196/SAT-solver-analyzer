@@ -5,9 +5,8 @@ from ..formula.clause import Clause
 from ..formula.formula import Formula
 
 k = int(getenv('K'))
-population = int(getenv('POPULATION'))
 countOfVariables = int(getenv('VARIABLES'))
-countOfClauses = int(countOfVariables * 4.2)
+countOfClauses = int(getenv('CLAUSES'))
 
 class RandomGenerator:
     def generateRandomFormula(self):
@@ -43,11 +42,3 @@ class RandomGenerator:
                     rangeOfVariables = countOfVariables
             clauses.append(Clause(literals))
         return Formula(clauses, countOfVariables)
-
-    def generateHardestFormulas(self):
-        formulas = []
-        for i in range(1000):
-            print(i)
-            formulas.append(self.generateSteadyRandomFormula())
-        formulas.sort(reverse = True)
-        return formulas[:population]
