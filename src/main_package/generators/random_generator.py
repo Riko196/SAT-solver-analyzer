@@ -5,11 +5,9 @@ from ..formula.clause import Clause
 from ..formula.formula import Formula
 
 k = int(getenv('K'))
-countOfVariables = int(getenv('VARIABLES'))
-countOfClauses = int(getenv('CLAUSES'))
 
 class RandomGenerator:
-    def generateRandomFormula(self):
+    def generateRandomFormula(self, countOfVariables, countOfClauses):
         clauses = []
         for _ in range(countOfClauses):
             literals = []
@@ -21,19 +19,27 @@ class RandomGenerator:
             clauses.append(Clause(literals))
         return Formula(clauses, countOfVariables)
 
-    def generateSteadyRandomFormula(self):
+    def generateSteadyRandomFormula(self, countOfVariables, countOfClauses):
         distributionOfVariables = [ i for i in range(1, countOfVariables + 1) ]
         rangeOfVariables = countOfVariables
-        countOfNegations = 0
+        countOfNegatives = 0
+        countOfPositives = 0
         clauses = []
         for _ in range(countOfClauses):
             literals = []
             for _ in range(k):
                 index = randint(1, rangeOfVariables)
                 takenVariable = distributionOfVariables[index - 1]
-                if (randint(0, 1) == 0 and countOfNegations < (countOfClauses*3)//2):
+                if countOfPositives > countOfNegatives + 10:
                     takenVariable = -takenVariable
-                    countOfNegations += 1
+                    countOfNegatives += 1
+                elif countOfNegatives > countOfPositives + 10:
+                    countOfPositives += 1
+                elif randint(0, 1) == 0:
+                    takenVariable = -takenVariable
+                    countOfNegatives += 1
+                else:
+                    countOfPositives += 1
                 literals.append(takenVariable)
                 distributionOfVariables[index - 1], distributionOfVariables[rangeOfVariables - 1] = \
                      distributionOfVariables[rangeOfVariables - 1], distributionOfVariables[index - 1]
