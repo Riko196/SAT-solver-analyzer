@@ -6,7 +6,7 @@ satSolverCommands = [
 ]
 
 def setConstants():
-    satSolverCommand = satSolverCommands[1]
+    satSolverCommand = satSolverCommands[0]
     environ['K'] = '3'
     environ['POPULATION'] = '100'
     environ['ITERATIONS'] = '100'
