@@ -4,10 +4,8 @@ from os import getenv
 from ..formula.clause import Clause
 from ..formula.formula import Formula
 
-k = int(getenv('K'))
-
 class RandomGenerator:
-    def generateRandomFormula(self, countOfVariables, countOfClauses):
+    def generateRandomFormula(self, k, countOfVariables, countOfClauses):
         clauses = []
         for _ in range(countOfClauses):
             literals = []
@@ -19,7 +17,7 @@ class RandomGenerator:
             clauses.append(Clause(literals))
         return Formula(clauses, countOfVariables)
 
-    def generateSteadyRandomFormula(self, countOfVariables, countOfClauses):
+    def generateEvenlyRandomFormula(self, k, countOfVariables, countOfClauses):
         distributionOfVariables = [ i for i in range(1, countOfVariables + 1) ]
         rangeOfVariables = countOfVariables
         countOfNegatives = 0
