@@ -2,7 +2,7 @@ from time import time
 from os import getenv, system
 
 from .generators.genetic_generator import GeneticGenerator
-from .analyzer.analyzer import Analyzer
+from .analyzers.satSolverAnalyzer import SatSolverAnalyzer
 
 def getMaximumFormulaTime():
     satSolverCmd = getenv('SAT_SOLVER_MAXIMUM_CMD')
@@ -22,7 +22,7 @@ def evolveHardestFormulas():
     return GeneticGenerator().evolveHardestFormulas()
 
 def analyzeHardestFormulas(hardestFormulas):
-    Analyzer().analyzeHardestFormulas(hardestFormulas)
+    SatSolverAnalyzer().analyzeHardestFormulas(hardestFormulas)
 
 def storeHardestFormulas(hardestFormulas):
     for index in range(len(hardestFormulas)):
