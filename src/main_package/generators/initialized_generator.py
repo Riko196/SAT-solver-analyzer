@@ -1,7 +1,8 @@
 from os import environ, getenv
 from .random_generator import RandomGenerator
-from ..analyzer.analyzer import Analyzer
+from ..analyzers.satSolverAnalyzer import SatSolverAnalyzer
 
+k = int(getenv('K'))
 population = int(getenv('POPULATION'))
 countOfInitializationFormulas = int(getenv('INITIALIZATION_FORMULAS'))
 
@@ -9,7 +10,7 @@ class InitializedGenerator:
     def generateInitializedFormulas(self):
         formulas = []
         randomGenerator = RandomGenerator()
-        analyzer = Analyzer()
+        analyzer = SatSolverAnalyzer()
 
         print('\nAnalyzing SAT solver:\n')
 
@@ -23,7 +24,7 @@ class InitializedGenerator:
 
         for i in range(countOfInitializationFormulas):
             print('Generated ' + str(i) + ' / ' + str(countOfInitializationFormulas) + ' initialization formula')
-            formulas.append(randomGenerator.generateSteadyRandomFormula(countOfVariables, countOfClauses))
+            formulas.append(randomGenerator.generateEvenlyRandomFormula(k, countOfVariables, countOfClauses))
 
         formulas.sort(reverse = True)
 
