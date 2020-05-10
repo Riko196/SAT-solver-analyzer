@@ -2,70 +2,63 @@ from numpy import mean, arange
 from matplotlib import pyplot
 
 from ..generators.random_generator import RandomGenerator
-
+from .bar import Bar
 class SatAnalyzer:
     def __init__(self):
         self.k = 3
         self.countOfVariables = 150
         self.countOfClauses = 630
 
-    def analyzeKSatFormulas(self):
+    def analyzeKSatFormulas(self, countOfIterations, countOfFormulas):
         randomGenerator = RandomGenerator()
         randomFormulasAverageTimes = []
 
         print('Analyzing k-SAT effectivity')
 
-        for k in range(1, 51):
+        for k in range(1, countOfIterations + 1):
             print('Analyzing for k = ' + str(k))
             randomFormulasTimes = []
-            for i in range(100):
-                print('Analyzing formula ' + str(i) + '/100')
+            for i in range(countOfFormulas):
+                print('Analyzing formula ' + str(i) + ' / ' + str(countOfFormulas))
                 randomFormula = randomGenerator.generateRandomFormula(k, self.countOfVariables, self.countOfClauses)
                 randomFormulasTimes.append(randomFormula.computingTime)
             randomFormulasAverageTimes.append(mean(randomFormulasTimes))
 
-        pyplot.bar(arange(50), randomFormulasAverageTimes)
-        pyplot.xticks(arange(50), range(1, 51))
-        pyplot.xlabel('k')
-        pyplot.ylabel('Times(s)')
+        bar = Bar(arange(countOfIterations), randomFormulasAverageTimes, [], [], range(1, countOfIterations + 1), 'k')
+        bar.render()
 
-        pyplot.show()
-
-    def analyzeCountOfClauses(self):
+    def analyzeCountOfClauses(self, countOfIterations, countOfFormulas):
         randomGenerator = RandomGenerator()
         randomFormulasAverageTimes = []
 
         print('Analyzing count of clauses effectivity')
 
-        for i in arange(1.0, 5.1, 0.1):
-            print('Analyzing formulas with ' + str(i) + ' times more clauses than variables')
+        for i in range(1, countOfIterations + 1):
+            print('Analyzing formulas with ' + str(i/10) + ' times more clauses than variables')
             randomFormulasTimes = []
-            countOfClauses = int(self.countOfVariables * i)
-            for j in range(100):
-                print('Analyzing formula ' + str(j) + '/100')
+            countOfClauses = int(self.countOfVariables * (float(i)/10))
+            for j in range(countOfFormulas):
+                print('Analyzing formula ' + str(j) + ' / ' + str(countOfFormulas))
                 randomFormula = randomGenerator.generateRandomFormula(self.k, self.countOfVariables, countOfClauses)
                 randomFormulasTimes.append(randomFormula.computingTime)
             randomFormulasAverageTimes.append(mean(randomFormulasTimes))
 
-        pyplot.bar(arange(50), randomFormulasAverageTimes)
-        pyplot.xticks(arange(50), arange(1.0, 5.1, 0.1))
-        pyplot.xlabel('k')
-        pyplot.ylabel('Times(s)')
+        xticks = [ str(float(i)/10) for i in range(1, countOfIterations + 1) ]
+        bar = Bar(arange(countOfIterations), randomFormulasAverageTimes, [], [], xticks, 'Multiple clauses')
+        bar.render()
 
-        pyplot.show()
-
-    def analyzeRandomAndEvenlyRandomFormulas(self):
+    def analyzeRandomAndEvenlyRandomFormulas(self, countOfIterations, countOfFormulas):
         randomGenerator = RandomGenerator()
         randomFormulasAverageTimes = []
         evenlyRandomFormulasAverageTimes = []
 
         print('Comparing random and evenly random formulas')
 
-        for iteration in range(100):
+        for iteration in range(countOfIterations):
             print('Iteration: ' + str(iteration))
             randomComputingTimes = []
             evenlyRandomComputingTimes = []
-            for formulaId in range(1000):
+            for formulaId in range(countOfFormulas):
                 print('Formulas ID: ' + str(formulaId))
                 randomFormula = randomGenerator.generateRandomFormula(self.k, self.countOfVariables, self.countOfClauses)
                 evenlyRandomFormula = randomGenerator.generateEvenlyRandomFormula(self.k, self.countOfVariables, self.countOfClauses)
@@ -74,12 +67,6 @@ class SatAnalyzer:
             randomFormulasAverageTimes.append(mean(randomComputingTimes))
             evenlyRandomFormulasAverageTimes.append(mean(evenlyRandomComputingTimes))
 
-
-        pyplot.bar(arange(2) - 0.2, randomFormulasAverageTimes, width = 0.2, color = 'blue', label = 'Random formulas')
-        pyplot.bar(arange(2), evenlyRandomFormulasAverageTimes, width = 0.2, color = 'red', label = 'Evenly random formulas')
-        pyplot.xticks(arange(2), arange(2))
-        pyplot.xlabel('Iteration')
-        pyplot.ylabel('Times(s)')
-        pyplot.legend(loc="upper left")
-
-        pyplot.show()
+        bar = Bar(arange(countOfIterations) - 0.2, randomFormulasAverageTimes, arange(countOfIterations), \
+            evenlyRandomFormulasAverageTimes, arange(countOfIterations), 'Iteration')
+        bar.render()
