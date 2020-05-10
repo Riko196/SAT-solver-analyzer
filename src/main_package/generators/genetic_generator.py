@@ -3,7 +3,7 @@ from numpy import mean
 from os import getenv
 from time import time
 
-from ..graph import Graph
+from .graph import Graph
 from .initialized_generator import InitializedGenerator
 from ..formula.clause import Clause
 from ..formula.formula import Formula
