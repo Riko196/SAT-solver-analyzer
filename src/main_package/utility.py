@@ -21,9 +21,12 @@ def getFormulaTime():
 def evolveHardestFormulas():
     return GeneticGenerator().evolveHardestFormulas()
 
-def analyzeHardestFormulas(hardestFormulas):
-    SatSolverAnalyzer().analyzeHardestFormulas(hardestFormulas)
-
-def storeHardestFormulas(hardestFormulas):
+def printHardestFormulas(hardestFormulas):
     for index in range(len(hardestFormulas)):
-        hardestFormulas[index].printFormula('generators/formula' + str(index) + '.cnf')
+        formula = hardestFormulas[index]
+        print('FORMULA' + str(index) + '\n\n')
+        print('p cnf ' + str(formula.countOfVariables) + ' ' + str(len(formula.clauses)) + '\n')
+        for clause in formula.clauses:
+            for literal in clause.literals:
+                print(str(literal) + ' ')
+                print('0\n\n\n')

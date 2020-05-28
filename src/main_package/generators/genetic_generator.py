@@ -7,15 +7,16 @@ from .graph import Graph
 from .initialized_generator import InitializedGenerator
 from ..formula.clause import Clause
 from ..formula.formula import Formula
+from ..analyzers.satSolverAnalyzer import SatSolverAnalyzer
 
 k = int(getenv('K'))
 population = int(getenv('POPULATION'))
 iterations = int(getenv('ITERATIONS'))
-countOfVariables = int(getenv('COUNT_OF_VARIABLES'))
-countOfClauses = int(getenv('COUNT_OF_CLAUSES'))
 maximumFileName = getenv('MAXIMUM_FORMULA_FILE')
 
 class GeneticGenerator:
+    countOfVariables = None
+    countOfClauses = None
     # population of formulas
     formulas = []
 
@@ -26,8 +27,8 @@ class GeneticGenerator:
     iterationsMaximumComputingTime = []
 
     def renderGraph(self):
-        graphTitle = 'Computing time (Variables: ' + str(countOfVariables) + ', Clauses: ' \
-            + str(countOfClauses) + ', Population: ' + str(population) + ')'
+        graphTitle = 'Computing time (Variables: ' + str(self.countOfVariables) + ', Clauses: ' \
+            + str(self.countOfClauses) + ', Population: ' + str(population) + ')'
         graph = Graph([ int(i) for i in range(1, iterations + 1)], self.iterationsAverageComputingTime, \
             self.iterationsMaximumComputingTime, graphTitle)
         graph.render()
@@ -51,6 +52,8 @@ class GeneticGenerator:
     def initialization(self):
         initializedGenerator = InitializedGenerator()
         self.formulas = initializedGenerator.generateInitializedFormulas()
+        self.countOfVariables = int(getenv('COUNT_OF_VARIABLES'))
+        self.countOfClauses = int(getenv('COUNT_OF_CLAUSES'))
 
     def executeIteration(self):
         computingTimes = []
@@ -76,19 +79,35 @@ class GeneticGenerator:
 
         self.reproduction()
 
+    def createMatrix(self, n):
+        matrix = []
+        for i in range(n):
+            matrix.append([])
+            for j in range(n):
+                matrix[i].append(False)
+        return matrix
+
     def reproduction(self):
+        matrix = self.createMatrix(30)
         for i in range(30, len(self.formulas)):
-            mother = self.formulas[randint(0, 29)]
-            father = self.formulas[randint(0, 29)]
+            mother = randint(0, 29)
+            father = randint(0, 29)
+            while mother == father and matrix[mother][father] == True:
+                mother = randint(0, 29)
+                father = randint(0, 29)
             child = self.formulas[i]
             child.changed = True
-            self.cross(mother, father, child)
+            matrix[mother][father] = True
+            self.cross(self.formulas[mother], self.formulas[father], child)
 
     def cross(self, mother, father, child):
+        lengthOfPermutation = self.countOfVariables / k
+        motherRound = randint(0, lengthOfPermutation)
         for i in range(len(child.clauses)):
-            parent = 0
-            if (i % countOfVariables == 0):
-                parent = randint(0, 1)
+            parent = 1
+            if (i % lengthOfPermutation == motherRound):
+                parent = 0
+                motherRound = randint(0, lengthOfPermutation)
             clause = child.clauses[i]
             parentClause = None
             if parent == 0:
@@ -101,7 +120,7 @@ class GeneticGenerator:
     def mutation(self, literal):
         mutate = randint(1, 100)
         if mutate == 1:
-            newLiteral = randint(1, countOfVariables)
+            newLiteral = randint(1, self.countOfVariables)
             if (randint(0, 1) == 0):
                 newLiteral = -newLiteral
             return newLiteral
