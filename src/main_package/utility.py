@@ -22,11 +22,15 @@ def evolveHardestFormulas():
     return GeneticGenerator().evolveHardestFormulas()
 
 def printHardestFormulas(hardestFormulas):
-    for index in range(len(hardestFormulas)):
-        formula = hardestFormulas[index]
-        print('FORMULA' + str(index) + '\n\n')
-        print('p cnf ' + str(formula.countOfVariables) + ' ' + str(len(formula.clauses)) + '\n')
-        for clause in formula.clauses:
-            for literal in clause.literals:
-                print(str(literal) + ' ')
-                print('0\n\n\n')
+    pathToFile = getenv('HARDES_INSTANCES_FILE')
+    with open(pathToFile, 'w') as file:
+        for index in range(len(hardestFormulas)):
+            formula = hardestFormulas[index]
+            file.write('FORMULA' + str(index) + '\n')
+            file.write('COMPUTING TIME: ' + str(formula.computingTime) + 's\n\n')
+            file.write('p cnf ' + str(formula.countOfVariables) + ' ' + str(len(formula.clauses)) + '\n')
+            for clause in formula.clauses:
+                for literal in clause.literals:
+                    file.write(str(literal) + ' ')
+                file.write('0\n')
+            file.write('\n\n\n')

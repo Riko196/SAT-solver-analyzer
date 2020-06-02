@@ -11,6 +11,7 @@ from ..analyzers.satSolverAnalyzer import SatSolverAnalyzer
 
 k = int(getenv('K'))
 population = int(getenv('POPULATION'))
+survivors = int(getenv('SURVIVORS'))
 iterations = int(getenv('ITERATIONS'))
 maximumFileName = getenv('MAXIMUM_FORMULA_FILE')
 
@@ -47,7 +48,7 @@ class GeneticGenerator:
 
         self.renderGraph()
 
-        return self.formulas
+        return self.formulas[:survivors]
 
     def initialization(self):
         initializedGenerator = InitializedGenerator()
@@ -83,31 +84,33 @@ class GeneticGenerator:
         matrix = []
         for i in range(n):
             matrix.append([])
-            for j in range(n):
+            for _ in range(n):
                 matrix[i].append(False)
         return matrix
 
     def reproduction(self):
-        matrix = self.createMatrix(30)
-        for i in range(30, len(self.formulas)):
-            mother = randint(0, 29)
-            father = randint(0, 29)
+        matrix = self.createMatrix(survivors)
+        for i in range(survivors, len(self.formulas)):
+            mother = randint(0, survivors - 1)
+            father = randint(0, survivors - 1)
             while mother == father and matrix[mother][father] == True:
-                mother = randint(0, 29)
-                father = randint(0, 29)
+                mother = randint(0, survivors - 1)
+                father = randint(0, survivors - 1)
             child = self.formulas[i]
             child.changed = True
             matrix[mother][father] = True
             self.cross(self.formulas[mother], self.formulas[father], child)
 
     def cross(self, mother, father, child):
-        lengthOfPermutation = self.countOfVariables / k
-        motherRound = randint(0, lengthOfPermutation)
+        lengthOfPermutation = self.countOfVariables // k
+        motherRound = None
         for i in range(len(child.clauses)):
             parent = 1
+            if (i % lengthOfPermutation == 0):
+                motherRound = randint(0, lengthOfPermutation)
             if (i % lengthOfPermutation == motherRound):
                 parent = 0
-                motherRound = randint(0, lengthOfPermutation)
+                motherRound = None
             clause = child.clauses[i]
             parentClause = None
             if parent == 0:
